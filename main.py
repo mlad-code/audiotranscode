@@ -52,7 +52,7 @@ def index():
     data = { 
         "conversation": { 
             "data_source": { 
-            "gcs_source": { 'audio_uri': 'gs://{}/{}'.format('hqyconverted',str(path) + str(file)}
+            "gcs_source": { 'audio_uri': 'gs://{}/{}'.format('hqyconverted',str(path) + '/' + str(file)}
             }
         },
         "redaction_config": {
