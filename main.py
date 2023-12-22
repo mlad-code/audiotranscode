@@ -41,17 +41,18 @@ def index():
     subprocess.call(['gsutil','cp', f"gs://{bucket}/{path}/{file}", '/tmp/src.wav'])
     subprocess.call(['/opt/build/bin/ffmpeg', '-i', '/tmp/src.wav', '-ac', '2', '/tmp/output.wav'])
     subprocess.call(['gsutil','cp', '/tmp/output.wav', f"gs://hqyconverted/{path}/{file}"])
-    data = { 
-        "conversation": { 
-            "data_source": { 
-            "gcs_source": { f"audio_uri': 'gs://hqyconverted/{path}/{file}"}
-            }
-        },
-        "redaction_config": {
-                "deidentify_template": deIdentifyTemplate,
-                "inspect_template": inspectTemplate        
-        }
-    }
+    data = f""" {{ 
+        ""conversation"": {{ 
+            ""data_source"": {{ 
+            ""gcs_source"": {{ ""audio_uri"": gs://hqyconverted/{path}/{file} }}
+            }}
+        }},
+        ""redaction_config"": {{
+                ""deidentify_template"": {{deIdentifyTemplate}},
+                ""inspect_template"": {{inspectTemplate}}        
+        }}
+    }} 
+"""
     atoken = subprocess.run(['gcloud','auth','print-access-token'], capture_output=True, text=True)
     headers = {'Content-Type':'application/json; charset=utf-8', 'Authorization':'Bearer {}'.format(atoken)}
     # transcribe, redact and upload each file
