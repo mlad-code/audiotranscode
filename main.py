@@ -1,5 +1,6 @@
 import base64
 import re
+import subprocess
 
 from flask import Flask, request
 
@@ -27,11 +28,11 @@ def index():
         msg = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
 
     (bucket, path, file) = parse_gs_url(msg) 
-    print(f"Hello bucket {bucket} from {msg}!")
-    print(f"Hello path {path} from {msg}!")
-    print(f"Hello file {file} from {msg}!")
+#    print(f"Hello bucket {bucket} from {msg}!")
+#    print(f"Hello path {path} from {msg}!")
+#    print(f"Hello file {file} from {msg}!")
     subprocess.call(['gsutil','cp', f"gs://{bucket}/{path}/{file}", '/tmp/src.wav'])
-    subprocess.call(['ffmpeg', '-i', '/tmp/src.wav', '-acodec', 'g723_1', '-ac', '1', '/tmp/output.wav'])
+    subprocess.call(['/opt/build/bin/ffmpeg', '-i', '/tmp/src.wav', '-ac', '1', '/tmp/output.wav'])
     subprocess.call(['gsutil','cp', '/tmp/output.wav', f"gs://testhqyconverted/{path}/{file}"])
 
     return ("", 204)
