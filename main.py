@@ -1,11 +1,29 @@
 import base64
 import re
 import subprocess
+import google.auth
+import google.auth.transport.requests
+import json
+from datetime import datetime
+import requests
 
 from flask import Flask, request
 
 
 app = Flask(__name__)
+
+# getting the credentials and project details for gcp project
+credentials, your_project_id = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+
+#getting request object
+auth_req = google.auth.transport.requests.Request()
+
+# UPDATE WITH YOUR PROJECT INFO
+project_id = "project-2-405406"
+location = "us-central1"
+url = "https://contactcenterinsights.googleapis.com/v1/projects/"+project_id+"/locations/"+location+"/conversations:upload"
+deIdentifyTemplate = "projects/project-2-405406/locations/us-central1/deidentifyTemplates/V5_DeIdentify_Template"
+inspectTemplate = "projects/project-2-405406/locations/us-central1/inspectTemplates/V5_Inspection_Template"
 
 @app.route("/", methods=["POST"])
 def index():
@@ -28,12 +46,27 @@ def index():
         msg = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
 
     (bucket, path, file) = parse_gs_url(msg) 
-#    print(f"Hello bucket {bucket} from {msg}!")
-#    print(f"Hello path {path} from {msg}!")
-#    print(f"Hello file {file} from {msg}!")
     subprocess.call(['gsutil','cp', f"gs://{bucket}/{path}/{file}", '/tmp/src.wav'])
-    subprocess.call(['/opt/build/bin/ffmpeg', '-i', '/tmp/src.wav', '-ac', '1', '/tmp/output.wav'])
+    subprocess.call(['/opt/build/bin/ffmpeg', '-i', '/tmp/src.wav', '-ac', '2', '/tmp/output.wav'])
     subprocess.call(['gsutil','cp', '/tmp/output.wav', f"gs://hqyconverted/{path}/{file}"])
+    data = { 
+        "conversation": { 
+            "data_source": { 
+            "gcs_source": { 'audio_uri': 'gs://{}/{}'.format('hqyconverted',str(path) + str(file)}
+            }
+        },
+        "redaction_config": {
+                "deidentify_template": deIdentifyTemplate,
+                "inspect_template": inspectTemplate        
+        }
+    }
+    credentials.refresh(auth_req) #refresh token
+    headers = {'Content-Type':'application/json; charset=utf-8', 'Authorization':'Bearer {}'.format(credentials.token)}
+    # transcribe, redact and upload each file
+    response = requests.post(url, headers=headers, json=data)
+    print("Status Code", response.status_code)
+    print("JSON Response ", response.json())
+
 
     return ("", 204)
 
