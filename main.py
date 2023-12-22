@@ -1,8 +1,8 @@
 import base64
 import re
 import subprocess
-import google.auth
-import google.auth.transport.requests
+#import google.auth
+#import google.auth.transport.requests
 import json
 from datetime import datetime
 import requests
@@ -13,10 +13,10 @@ from flask import Flask, request
 app = Flask(__name__)
 
 # getting the credentials and project details for gcp project
-credentials, your_project_id = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+#credentials, your_project_id = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
 
 #getting request object
-auth_req = google.auth.transport.requests.Request()
+#auth_req = google.auth.transport.requests.Request()
 
 # UPDATE WITH YOUR PROJECT INFO
 project_id = "project-2-405406"
@@ -60,8 +60,8 @@ def index():
                 "inspect_template": inspectTemplate        
         }
     }
-    credentials.refresh(auth_req) #refresh token
-    headers = {'Content-Type':'application/json; charset=utf-8', 'Authorization':'Bearer {}'.format(credentials.token)}
+    atoken = subprocess.run(['glcoud','auth','print-access-token'], capture_output=True, text=True)
+    headers = {'Content-Type':'application/json; charset=utf-8', 'Authorization':'Bearer {}'.format(atoken)}
     # transcribe, redact and upload each file
     response = requests.post(url, headers=headers, json=data)
     print("Status Code", response.status_code)
