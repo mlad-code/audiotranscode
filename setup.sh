@@ -16,4 +16,4 @@ gcloud run services add-iam-policy-binding pubsub-transcoder --member=serviceAcc
 gcloud projects add-iam-policy-binding $PROJECTID  --member=serviceAccount:service-$PROJECTNUM@gcp-sa-pubsub.iam.gserviceaccount.com --role=roles/iam.serviceAccountTokenCreator
 
 #create subscriptoin to topic
-gcloud pubsub subscriptions create transcoder --topic $TOPIC --ack-deadline=1200  --push-endpoint=$ENDPOINT  --push-auth-service-account=cloud-run-pubsub-invoker@$PROJECTID.iam.gserviceaccount.com
+gcloud pubsub subscriptions create transcoder --topic $TOPIC --ack-deadline=600  --push-endpoint=$ENDPOINT  --push-auth-service-account=cloud-run-pubsub-invoker@$PROJECTID.iam.gserviceaccount.com

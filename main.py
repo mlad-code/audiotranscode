@@ -33,7 +33,7 @@ def index():
 #    print(f"Hello file {file} from {msg}!")
     subprocess.call(['gsutil','cp', f"gs://{bucket}/{path}/{file}", '/tmp/src.wav'])
     subprocess.call(['/opt/build/bin/ffmpeg', '-i', '/tmp/src.wav', '-ac', '1', '/tmp/output.wav'])
-    subprocess.call(['gsutil','cp', '/tmp/output.wav', f"gs://testhqyconverted/{path}/{file}"])
+    subprocess.call(['gsutil','cp', '/tmp/output.wav', f"gs://hqyconverted/{path}/{file}"])
 
     return ("", 204)
 
