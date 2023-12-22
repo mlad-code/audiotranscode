@@ -30,6 +30,9 @@ def index():
     print(f"Hello bucket {bucket} from {msg}!")
     print(f"Hello path {path} from {msg}!")
     print(f"Hello file {file} from {msg}!")
+    subprocess.call(['gsutil','cp', f"gs://{bucket}/{path}/{file}", '/tmp/src.wav'])
+    subprocess.call(['ffmpeg', '-i', '/tmp/src.wav', '-acodec', 'g723_1', '-ac', '1', '/tmp/output.wav'])
+    subprocess.call(['gsutil','cp', '/tmp/output.wav', f"gs://testhqyconverted/{path}/{file}"])
 
     return ("", 204)
 
@@ -44,7 +47,7 @@ def parse_gs_url(gs_url):
     A tuple containing the bucket name, path and filename.
   """
 
-  match = re.match('gs://([^/]*)/(.*?)/(.*)', gs_url)
+  match = re.match('gs://([^/]*)/(.*)/(.*)', gs_url)
   if match:
     return match.groups()
   else:
