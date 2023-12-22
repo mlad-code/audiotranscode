@@ -8,7 +8,7 @@ ENDPOINT=
 
 #Create the Cloud Run
 gcloud builds submit --tag gcr.io/$PROJECTID/transcoder
-gcloud run deploy pubsub-transcoder --image gcr.io/$PROJECTID/pubsub  --concurrency=1 --cpu=8 --memory=32Gi --min-instances=350 --max-instances=500 --no-cpu-throttling  --no-allow-unauthenticated 
+gcloud run deploy pubsub-transcoder --image gcr.io/$PROJECTID/transcoder  --concurrency=1 --cpu=8 --memory=32Gi --min-instances=350 --max-instances=500 --no-cpu-throttling  --no-allow-unauthenticated 
 
 #Create the service account and allow authentication for that account only
 gcloud iam service-accounts create cloud-run-pubsub-invoker --display-name "Cloud Run Pub/Sub Invoker"
