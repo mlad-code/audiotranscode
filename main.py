@@ -15,8 +15,8 @@ app = Flask(__name__)
 # UPDATE WITH YOUR PROJECT INFO
 project_id = os.getenv("PROJECT_ID")
 location = os.getenv("LOCATION")
-deidentify_template_name = os.getenv("DEIDENTIFY_TEMPLATE_NAME")
-inspect_template_name = os.getenv("INSPECT_TEMPLATE_NAME")
+deidentify_template_name = os.getenv("DTN")
+inspect_template_name = os.getenv("ITN")
 
 # Initialize the Contact Center AI Insights client
 
