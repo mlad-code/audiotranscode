@@ -5,13 +5,13 @@ import subprocess
 from datetime import datetime
 import requests
 from google.cloud import storage
-from google.cloud import contactcenterinsights_v1
+from google.cloud import contact_center_insights_v1
 
 from flask import Flask, request
 
 app = Flask(__name__)
 
-# url = "https://contactcenterinsights.googleapis.com/v1/projects/" + project_id + "/locations/" + location + "/conversations:upload"
+# url = "https://contact_center_insights.googleapis.com/v1/projects/" + project_id + "/locations/" + location + "/conversations:upload"
 # UPDATE WITH YOUR PROJECT INFO
 project_id = os.getenv("PROJECT_ID")
 location = os.getenv("LOCATION")
@@ -21,7 +21,7 @@ inspect_template_name = os.getenv("ITN")
 # Initialize the Contact Center AI Insights client
 
 # Initialize the Contact Center AI Insights client
-client = contactcenterinsights_v1.ContactCenterInsightsClient()
+client = contact_center_insights_v1.ContactCenterInsightsClient()
 
 @app.route("/", methods=["POST"])
 def index():
@@ -55,7 +55,7 @@ def index():
     subprocess.call(['/opt/build/bin/ffmpeg', '-i', '/tmp/src.wav', '-ac', '2', '-y', "/tmp/output.wav"])
 
     # Upload the converted file to a new Google Cloud Storage bucket
-    bucket = storage_client.bucket("hqyconverted")
+    bucket = storage_client.bucket("hqyconverted2")
     blob = bucket.blob(f"{path}/{file}")
     blob.upload_from_filename('/tmp/output.wav')
 
@@ -63,7 +63,7 @@ def index():
     # data = {
     #     "conversation": {
     #         "data_source": {
-    #             "gcs_source": {"audio_uri": f"gs://hqyconverted/{path}/{file}"}
+    #             "gcs_source": {"audio_uri": f"gs://hqyconverted2/{path}/{file}"}
     #         }
     #     },
     #     "agentId": "AGENT",
@@ -81,17 +81,17 @@ def index():
     try:
         response = client.upload_conversation(
             parent=f"projects/{project_id}/locations/{location}",
-            conversation=contactcenterinsights_v1.Conversation(
-                data_source=contactcenterinsights_v1.DataSource(
-                    gcs_source=contactcenterinsights_v1.GcsSource(
-                        audio_uri=f"gs://hqyconverted/{path}/{file}"
+            conversation=contact_center_insights_v1.Conversation(
+                data_source=contact_center_insights_v1.DataSource(
+                    gcs_source=contact_center_insights_v1.GcsSource(
+                        audio_uri=f"gs://hqyconverted2/{path}/{file}"
                     )
                 ),
                 agent_id="AGENT",
-                call_metadata=contactcenterinsights_v1.CallMetadata(
+                call_metadata=contact_center_insights_v1.CallMetadata(
                     agent_channel=1, customer_channel=2
                 ),
-                redaction_config=contactcenterinsights_v1.RedactionConfig(
+                redaction_config=contact_center_insights_v1.RedactionConfig(
                     deidentify_template=deidentify_template_name,
                     inspect_template=inspect_template_name
                 )
