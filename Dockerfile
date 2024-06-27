@@ -4,7 +4,7 @@ ENV CLOUDSDK_CORE_DISABLE_PROMPTS=1
 ENV PYTHONUNBUFFERED True
 
 RUN apt update \ 
-    && apt install -y --no-install-recommends util-linux mediainfo python3-pip
+    && apt install -y --no-install-recommends util-linux mediainfo python3-pip ffmpeg
 
 COPY requirements.txt ./
 COPY ./entrypoint.sh /entrypoint.sh
