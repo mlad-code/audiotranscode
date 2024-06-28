@@ -11,7 +11,7 @@ start_file = "split_aau"  # Replace with the desired starting file
 i=0
 
 # Get a list of files starting with 'filesplit*'
-files = [f for f in os.listdir(".") if f.startswith("split_*")]
+files = [f for f in os.listdir(".") if f.startswith("split_")]
 files.sort()  # Sort the files alphabetically  
 
 # Iterate through the files, starting from the specified file
