@@ -8,6 +8,7 @@ import time
 pause_time = 360 #6 min
 # Set the starting file
 start_file = "split_aau"  # Replace with the desired starting file
+i=0
 
 # Get a list of files starting with 'filesplit*'
 files = [f for f in os.listdir(".") if f.startswith("split_*")]
